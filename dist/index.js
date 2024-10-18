@@ -30506,7 +30506,7 @@ const process_plan_output = async output => {
     .reverse()
     .find(line => /^(No changes|Error:|Apply|Plan:)/.test(line))
 
-  await github.rest.issues.createComment({
+  await github.issues.createComment({
     body: ```
     ${details.join('\n')}
     *Summary*
