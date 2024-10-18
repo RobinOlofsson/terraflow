@@ -30506,13 +30506,16 @@ const process_plan_output = async output => {
     .reverse()
     .find(line => /^(No changes|Error:|Apply|Plan:)/.test(line))
 
-  await github.issues.createComment({
+  const token = process.env.GITHUB_TOKEN
+  const octokit = github.getOctokit(token)
+
+  await octokit.rest.issues.createComment({
     body: ```
     ${details.join('\n')}
     *Summary*
     ${result_summary}
     ```,
-    issue_number: github.context.issue.number,
+    issue_number: github.context.payload.pull_request.number,
     owner: github.context.repo.owner,
     repo: github.context.repo.repo
   })
