@@ -21,7 +21,7 @@ export const process_plan_output = async output => {
   const octokit = github.getOctokit(token)
 
   await octokit.rest.issues.createComment({
-    body: stripAnsi(cli_result),
+    body: stripAnsi.default(cli_result),
     issue_number: github.context.payload.pull_request.number,
     owner: github.context.repo.owner,
     repo: github.context.repo.repo
