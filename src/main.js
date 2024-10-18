@@ -1,5 +1,6 @@
 const core = require('@actions/core')
-const { wait } = require('./wait')
+const github = require('@actions/github')
+// const { wait } = require('./wait')
 
 /**
  * The main function for the action.
@@ -7,20 +8,18 @@ const { wait } = require('./wait')
  */
 async function run() {
   try {
-    const ms = core.getInput('milliseconds', { required: true })
+    if (github.context.eventName === 'pull_request') {
+      core.info('something is happening in a pull request!')
+      return
+    }
 
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
-
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
-
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
+    if (
+      github.context.eventName === 'push' &&
+      github.context.payload.ref === 'refs/heads/main'
+    ) {
+      core.info('merge to main!')
+    }
   } catch (error) {
-    // Fail the workflow run if an error occurs
     core.setFailed(error.message)
   }
 }
