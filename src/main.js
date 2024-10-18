@@ -12,7 +12,7 @@ async function run() {
     if (github.context.eventName === 'pull_request') {
       core.info('something is happening in a pull request!')
 
-      run_command('init', {
+      await run_command('init', {
         listeners: {
           stdout: parse_output,
           stderr: parse_output
