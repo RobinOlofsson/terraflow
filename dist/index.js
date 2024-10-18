@@ -30438,7 +30438,7 @@ function wrappy (fn, cb) {
 const core = __nccwpck_require__(2186)
 const github = __nccwpck_require__(5438)
 const { run_command } = __nccwpck_require__(573)
-const { parse_output } = __nccwpck_require__(618)
+const { process_plan_output } = __nccwpck_require__(618)
 
 /**
  * The main function for the action.
@@ -30449,18 +30449,12 @@ async function run() {
     if (github.context.eventName === 'pull_request') {
       core.info('something is happening in a pull request!')
 
-      await run_command('init', {
-        listeners: {
-          stdout: parse_output,
-          stderr: parse_output
-        },
-        ignoreReturnCode: true
-      })
+      await run_command('init', {})
 
       run_command('plan', {
         listeners: {
-          stdout: parse_output,
-          stderr: parse_output
+          stdout: process_plan_output,
+          stderr: process_plan_output
         },
         ignoreReturnCode: true
       })
@@ -30492,10 +30486,36 @@ module.exports = {
 "use strict";
 __nccwpck_require__.r(__webpack_exports__);
 /* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
-/* harmony export */   "parse_output": () => (/* binding */ parse_output)
+/* harmony export */   "process_plan_output": () => (/* binding */ process_plan_output)
 /* harmony export */ });
-const parse_output = output => {
-  console.log(output)
+const github = __nccwpck_require__(5438)
+
+const process_plan_output = async output => {
+  const cli_result = output.toString()
+  const result_rows = cli_result.split('\n')
+
+  const start = result_rows.indexOf(
+    'OpenTofu will perform the following actions'
+  )
+  const stop = result_rows.indexOf('Plan:')
+
+  const details = result_rows.slice(start, stop)
+
+  const result_summary = cli_result
+    .split('\n')
+    .reverse()
+    .find(line => /^(No changes|Error:|Apply|Plan:)/.test(line))
+
+  await github.rest.issues.createComment({
+    body: ```
+    ${details.join('\n')}
+    *Summary*
+    ${result_summary}
+    ```,
+    issue_number: github.context.issue.number,
+    owner: github.context.repo.owner,
+    repo: github.context.repo.repo
+  })
 }
 
 
