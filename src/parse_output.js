@@ -21,9 +21,9 @@ export const process_plan_output = async output => {
 
   await octokit.rest.issues.createComment({
     body: [
-      '```',
+      '```\\n',
       details.join('\n'),
-      '```\n',
+      '```\\n\\n',
       '**Summary**: ',
       result_summary
     ].join(''),
