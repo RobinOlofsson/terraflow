@@ -12,8 +12,6 @@ export const process_plan_output = async output => {
 
   const details = result_rows.slice(start + 1, stop)
 
-  console.log('[cli_result]', cli_result, '[/cli_result]')
-
   const result_summary = result_rows.find(line =>
     /^(No changes|Error:|Apply|Plan:)/.test(line)
   )
@@ -22,11 +20,13 @@ export const process_plan_output = async output => {
   const octokit = github.getOctokit(token)
 
   await octokit.rest.issues.createComment({
-    body: `
-    ${details.join('\n')}
-    *Summary*
-    ${result_summary}
-    `,
+    body: [
+      '```',
+      details.join('\n'),
+      '```\n',
+      '**Summary**: ',
+      result_summary
+    ].join(''),
     issue_number: github.context.payload.pull_request.number,
     owner: github.context.repo.owner,
     repo: github.context.repo.repo
