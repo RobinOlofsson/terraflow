@@ -30504,10 +30504,8 @@ __nccwpck_require__.r(__webpack_exports__);
 const exec = __nccwpck_require__(1514)
 const core = __nccwpck_require__(2186)
 
-const run_command = (action, options) => {
-  const cli_tool = process.env.TOFU_CLI_PATH
-
-  if (!cli_tool) {
+const run_command = async (action, options) => {
+  if (!process.env.TOFU_CLI_PATH) {
     throw new Error('TOFU_CLI_PATH is not set')
   }
 
@@ -30515,8 +30513,7 @@ const run_command = (action, options) => {
     throw new Error(`Unknown action: ${action}`)
   }
 
-  const exitCode = exec.exec(cli_tool, [action], options)
-
+  const exitCode = await exec.exec('tofu', [action], options)
   if (exitCode !== 0) {
     throw new Error(`Failed to run ${action}`)
   }
