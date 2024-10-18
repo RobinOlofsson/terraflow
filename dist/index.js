@@ -30438,7 +30438,7 @@ function wrappy (fn, cb) {
 const core = __nccwpck_require__(2186)
 const github = __nccwpck_require__(5438)
 const { run_command } = __nccwpck_require__(573)
-const { parse_output } = __nccwpck_require__(9966)
+const { parse_output } = __nccwpck_require__(618)
 
 /**
  * The main function for the action.
@@ -30478,6 +30478,21 @@ module.exports = {
 
 /***/ }),
 
+/***/ 618:
+/***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
+
+"use strict";
+__nccwpck_require__.r(__webpack_exports__);
+/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
+/* harmony export */   "parse_output": () => (/* binding */ parse_output)
+/* harmony export */ });
+const parse_output = output => {
+  console.log(output)
+}
+
+
+/***/ }),
+
 /***/ 573:
 /***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
 
@@ -30506,14 +30521,6 @@ const run_command = (action, options) => {
     throw new Error(`Failed to run ${action}`)
   }
 }
-
-
-/***/ }),
-
-/***/ 9966:
-/***/ ((module) => {
-
-module.exports = eval("require")("./parse_output");
 
 
 /***/ }),
