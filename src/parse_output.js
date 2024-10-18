@@ -4,19 +4,19 @@ export const process_plan_output = async output => {
   const cli_result = output.toString()
   const result_rows = cli_result.split('\n')
 
-  const start = result_rows.indexOf(
-    'OpenTofu will perform the following actions'
+  const start = result_rows.findIndex(row =>
+    /^OpenTofu will perform the following actions:/.test(row)
   )
-  const stop = result_rows.indexOf('Plan:')
 
-  const details = result_rows.slice(start, stop)
+  const stop = result_rows.findIndex(row => /^Plan:/.test(row))
+
+  const details = result_rows.slice(start + 1, stop)
 
   console.log('[cli_result]', cli_result, '[/cli_result]')
 
-  const result_summary = cli_result
-    .split('\n')
-    .reverse()
-    .find(line => /^(No changes|Error:|Apply|Plan:)/.test(line))
+  const result_summary = result_rows.find(line =>
+    /^(No changes|Error:|Apply|Plan:)/.test(line)
+  )
 
   const token = process.env.GITHUB_TOKEN
   const octokit = github.getOctokit(token)
