@@ -30501,6 +30501,8 @@ const process_plan_output = async output => {
 
   const details = result_rows.slice(start, stop)
 
+  console.log('[cli_result]', cli_result, '[/cli_result]')
+
   const result_summary = cli_result
     .split('\n')
     .reverse()
