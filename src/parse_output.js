@@ -2,7 +2,7 @@ const github = require('@actions/github')
 const stripAnsi = require('strip-ansi')
 
 export const process_plan_output = async output => {
-  const cli_result = output.toString()
+  const cli_result = stripAnsi.default(output.toString())
   const result_rows = cli_result.split('\n')
 
   const start = result_rows.findIndex(row =>
@@ -21,7 +21,7 @@ export const process_plan_output = async output => {
   const octokit = github.getOctokit(token)
 
   await octokit.rest.issues.createComment({
-    body: stripAnsi.default(cli_result),
+    body: ['```\n', ...details, '```\n', result_summary].join('\n'),
     issue_number: github.context.payload.pull_request.number,
     owner: github.context.repo.owner,
     repo: github.context.repo.repo
