@@ -1,6 +1,7 @@
 const core = require('@actions/core')
 const github = require('@actions/github')
-// const { wait } = require('./wait')
+const { run_command } = require('./run_command')
+const { parse_output } = require('./parse_output')
 
 /**
  * The main function for the action.
@@ -10,6 +11,15 @@ async function run() {
   try {
     if (github.context.eventName === 'pull_request') {
       core.info('something is happening in a pull request!')
+
+      run_command('init', {
+        listeners: {
+          stdout: parse_output,
+          stderr: parse_output
+        },
+        ignoreReturnCode: true
+      })
+
       return
     }
 
