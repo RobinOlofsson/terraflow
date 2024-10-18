@@ -30457,6 +30457,14 @@ async function run() {
         ignoreReturnCode: true
       })
 
+      run_command('plan', {
+        listeners: {
+          stdout: parse_output,
+          stderr: parse_output
+        },
+        ignoreReturnCode: true
+      })
+
       return
     }
 
