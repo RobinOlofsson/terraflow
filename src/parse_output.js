@@ -1,4 +1,5 @@
 const github = require('@actions/github')
+const stripAnsi = require('strip-ansi')
 
 export const process_plan_output = async output => {
   const cli_result = output.toString()
@@ -20,7 +21,7 @@ export const process_plan_output = async output => {
   const octokit = github.getOctokit(token)
 
   await octokit.rest.issues.createComment({
-    body: cli_result,
+    body: stripAnsi(cli_result),
     issue_number: github.context.payload.pull_request.number,
     owner: github.context.repo.owner,
     repo: github.context.repo.repo

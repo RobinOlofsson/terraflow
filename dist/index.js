@@ -30489,6 +30489,7 @@ __nccwpck_require__.r(__webpack_exports__);
 /* harmony export */   "process_plan_output": () => (/* binding */ process_plan_output)
 /* harmony export */ });
 const github = __nccwpck_require__(5438)
+const stripAnsi = __nccwpck_require__(8770)
 
 const process_plan_output = async output => {
   const cli_result = output.toString()
@@ -30510,7 +30511,7 @@ const process_plan_output = async output => {
   const octokit = github.getOctokit(token)
 
   await octokit.rest.issues.createComment({
-    body: cli_result,
+    body: stripAnsi(cli_result),
     issue_number: github.context.payload.pull_request.number,
     owner: github.context.repo.owner,
     repo: github.context.repo.repo
@@ -32410,6 +32411,49 @@ function parseParams (str) {
 }
 
 module.exports = parseParams
+
+
+/***/ }),
+
+/***/ 8770:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
+
+"use strict";
+// ESM COMPAT FLAG
+__nccwpck_require__.r(__webpack_exports__);
+
+// EXPORTS
+__nccwpck_require__.d(__webpack_exports__, {
+  "default": () => (/* binding */ stripAnsi)
+});
+
+;// CONCATENATED MODULE: ./node_modules/ansi-regex/index.js
+function ansiRegex({onlyFirst = false} = {}) {
+	// Valid string terminator sequences are BEL, ESC\, and 0x9c
+	const ST = '(?:\\u0007|\\u001B\\u005C|\\u009C)';
+	const pattern = [
+		`[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?${ST})`,
+		'(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-nq-uy=><~]))',
+	].join('|');
+
+	return new RegExp(pattern, onlyFirst ? undefined : 'g');
+}
+
+;// CONCATENATED MODULE: ./node_modules/strip-ansi/index.js
+
+
+const regex = ansiRegex();
+
+function stripAnsi(string) {
+	if (typeof string !== 'string') {
+		throw new TypeError(`Expected a \`string\`, got \`${typeof string}\``);
+	}
+
+	// Even though the regex is global, we don't need to reset the `.lastIndex`
+	// because unlike `.exec()` and `.test()`, `.replace()` does it automatically
+	// and doing it manually has a performance penalty.
+	return string.replace(regex, '');
+}
 
 
 /***/ })
